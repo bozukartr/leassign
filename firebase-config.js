@@ -114,4 +114,10 @@ async function initializeFirebase() {
 function setupReportSystem() {
     console.log("Rapor sistemi kuruldu");
     // Rapor sistemi kodları buraya gelecek
+}
+
+// firebase-config.js sonuna ekleyin
+window.setupReportSystem = function() {
+    console.log("Rapor sistemi kuruldu");
+    // Rapor sistemi kodları buraya gelecek
 } 
