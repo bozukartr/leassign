@@ -109,4 +109,9 @@ async function initializeFirebase() {
     
     // Yerel verileri Firebase'e aktar
     return migrateLocalDataToFirebase();
+}
+
+function setupReportSystem() {
+    console.log("Rapor sistemi kuruldu");
+    // Rapor sistemi kodları buraya gelecek
 } 
