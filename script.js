@@ -1553,388 +1553,488 @@ function downloadReport() {
 
 // Daily Brief için gerekli fonksiyonlar
 function setupDailyBrief() {
-    // Villa verileri ve atama verileri hazır olduğundan emin ol
-    if (villas.length === 0) {
-        console.warn("Villa verileri yüklenemedi, brief güncellenemedi!");
-        return;
-    }
-    
-    // Günlük Brief tarihini ayarla
-    updateBriefDate();
-    
-    // Detayları görüntüleme/gizleme
-    document.querySelectorAll('.brief-detail-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            const detailsElement = document.getElementById(targetId);
-            
-            // Tüm detay panellerini kapat
-            document.querySelectorAll('.brief-details').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            
-            // Hedef paneli aç
-            detailsElement.classList.add('active');
-        });
-    });
-    
-    // Detay panellerini kapatma
-    document.querySelectorAll('.close-details-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.closest('.brief-details').classList.remove('active');
-        });
-    });
-    
-    // Yazdır butonu
-    document.getElementById('printBriefBtn').addEventListener('click', printDailyBrief);
-    
-    // Brief verilerini yükle
-    updateDailyBrief();
-    console.log("Brief verileri güncellendi: Toplam villa sayısı", villas.length);
-    
-    // Otomatik güncelleme için zamanlayıcıyı başlat
-    // Her 30 dakikada bir ve gün değişimlerinde güncelleme yapar
-    startBriefAutoUpdate();
-}
-
-// Günlük Brief için otomatik güncelleme
-let briefUpdateInterval;
-let currentDay = new Date().getDate();
-
-function startBriefAutoUpdate() {
-    // Mevcut zamanlayıcıyı temizle
-    if (briefUpdateInterval) {
-        clearInterval(briefUpdateInterval);
-    }
-    
-    // 30 dakikada bir güncelleme yapacak şekilde ayarla (milisaniye cinsinden)
-    const updateIntervalMs = 30 * 60 * 1000; // 30 dakika
-    
-    briefUpdateInterval = setInterval(() => {
-        const now = new Date();
-        const today = now.getDate();
-        
-        // Gün değiştiyse tarih göstergesini de güncelle
-        if (today !== currentDay) {
-            currentDay = today;
-            updateBriefDate();
+    try {
+        // Villa verileri ve atama verileri hazır olduğundan emin ol
+        if (villas.length === 0) {
+            console.warn("Villa verileri yüklenemedi, brief güncellenemedi!");
+            return;
         }
         
-        // Brief verilerini güncelle
-        updateDailyBrief();
+        // Günlük Brief tarihini ayarla
+        updateBriefDate();
+        console.log("Debug: Brief tarihi güncellendi");
         
-        console.log("Daily Brief otomatik olarak güncellendi: " + now.toLocaleTimeString());
-    }, updateIntervalMs);
-    
-    // Günlük otomatik güncelleme durumunu konsola bildir
-    console.log("Daily Brief otomatik güncelleme başlatıldı, 30 dakikada bir güncellenecek.");
+        // DOM elemanlarını kontrol et
+        const detailBtns = document.querySelectorAll('.brief-detail-btn');
+        if (detailBtns.length === 0) {
+            console.warn("Brief detay butonları bulunamadı! DOM henüz hazır olmayabilir.");
+            // Hata fırlatma yerine fonksiyonu sonlandır
+            return;
+        }
+        
+        // Detayları görüntüleme/gizleme
+        detailBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const detailsElement = document.getElementById(targetId);
+                
+                if (!detailsElement) {
+                    console.warn(`Hedef element bulunamadı: #${targetId}`);
+                    return;
+                }
+                
+                // Tüm detay panellerini kapat
+                document.querySelectorAll('.brief-details').forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                
+                // Hedef paneli aç
+                detailsElement.classList.add('active');
+            });
+        });
+        console.log("Debug: Detay butonları ayarlandı");
+        
+        // Detay panellerini kapatma
+        const closeBtns = document.querySelectorAll('.close-details-btn');
+        if (closeBtns.length === 0) {
+            console.warn("Brief kapat butonları bulunamadı!");
+        } else {
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const panel = btn.closest('.brief-details');
+                    if (panel) {
+                        panel.classList.remove('active');
+                    }
+                });
+            });
+            console.log("Debug: Kapat butonları ayarlandı");
+        }
+        
+        // Yazdır butonu
+        const printBtn = document.getElementById('printBriefBtn');
+        if (!printBtn) {
+            console.warn("Brief yazdır butonu bulunamadı!");
+        } else {
+            printBtn.addEventListener('click', printDailyBrief);
+            console.log("Debug: Yazdır butonu ayarlandı");
+        }
+        
+        // Brief verilerini yükle
+        updateDailyBrief();
+        console.log("Brief verileri güncellendi: Toplam villa sayısı", villas.length);
+        
+        // Otomatik güncelleme için zamanlayıcıyı başlat
+        // Her 30 dakikada bir ve gün değişimlerinde güncelleme yapar
+        startBriefAutoUpdate();
+        console.log("Debug: Brief otomatik güncelleme başlatıldı");
+        
+    } catch (error) {
+        console.error("setupDailyBrief hatası:", error);
+        console.error("Hata yeri:", error.stack);
+    }
+}
+
+// Otomatik güncelleme zamanlayıcısını başlat
+let briefUpdateInterval = null; // Global değişken
+
+function startBriefAutoUpdate() {
+    try {
+        // Mevcut zamanlayıcıyı temizle
+        if (briefUpdateInterval) {
+            clearInterval(briefUpdateInterval);
+            briefUpdateInterval = null;
+        }
+        
+        // Her 30 dakikada bir güncelle
+        briefUpdateInterval = setInterval(() => {
+            try {
+                updateDailyBrief();
+                console.log("Brief otomatik olarak güncellendi - 30dk");
+            } catch (err) {
+                console.error("Otomatik brief güncelleme hatası:", err);
+            }
+        }, 30 * 60 * 1000); // 30 dakika
+        
+        // Gün değişiminde güncelle (gece yarısı)
+        const now = new Date();
+        const night = new Date();
+        night.setHours(24, 0, 0, 0); // Gece yarısı
+        
+        // Şu an ile gece yarısı arasındaki fark (milisaniye cinsinden)
+        const msToMidnight = night.getTime() - now.getTime();
+        
+        // Gece yarısında bir kez çalışacak zamanlayıcı
+        setTimeout(() => {
+            try {
+                updateBriefDate(); // Tarihi güncelle
+                updateDailyBrief(); // Brief verilerini güncelle
+                console.log("Gün değişiminde brief güncellendi");
+                
+                // Sonraki günler için her gece yarısı otomatik güncelleme
+                setInterval(() => {
+                    try {
+                        updateBriefDate();
+                        updateDailyBrief();
+                        console.log("Yeni gün için brief güncellendi");
+                    } catch (err) {
+                        console.error("Günlük brief güncelleme hatası:", err);
+                    }
+                }, 24 * 60 * 60 * 1000); // 24 saat
+            } catch (err) {
+                console.error("Gece yarısı brief güncelleme hatası:", err);
+            }
+        }, msToMidnight);
+        
+        // Günlük otomatik güncelleme durumunu konsola bildir
+        console.log("Daily Brief otomatik güncelleme başlatıldı, 30 dakikada bir güncellenecek.");
+    } catch (error) {
+        console.error("startBriefAutoUpdate hatası:", error);
+    }
 }
 
 // Brief tarihini güncelle
 function updateBriefDate() {
-    const dateElement = document.getElementById('briefDate');
-    const today = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateElement.textContent = today.toLocaleDateString('tr-TR', options);
+    try {
+        const dateElement = document.getElementById('briefDate');
+        if (!dateElement) {
+            console.warn("Brief tarih elementi bulunamadı!");
+            return;
+        }
+
+        const today = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateElement.textContent = today.toLocaleDateString('tr-TR', options);
+        console.log("Brief tarihi güncellendi");
+    } catch (error) {
+        console.error("updateBriefDate hatası:", error);
+    }
 }
 
 // Günlük Brief verilerini güncelle
 function updateDailyBrief() {
-    // Bugünün başlangıcı ve bitişi
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    // Bugün gelenler
-    const arrivingToday = assignments.filter(assignment => {
-        const startDate = new Date(assignment.startDate);
-        startDate.setHours(0, 0, 0, 0);
-        return startDate.getTime() === today.getTime();
-    });
-    
-    // Bugün ayrılanlar
-    const departingToday = assignments.filter(assignment => {
-        const endDate = new Date(assignment.endDate);
-        endDate.setHours(0, 0, 0, 0);
-        return endDate.getTime() === today.getTime();
-    });
-    
-    // Dolu villalar (aktif atamalar)
-    // Not: Bugün giriş yapacak villalar aktif, bugün çıkış yapacak villalar pasif durumda
-    const activeAssignments = assignments.filter(assignment => {
-        const startDate = new Date(assignment.startDate);
-        const endDate = new Date(assignment.endDate);
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(0, 0, 0, 0);
+    try {
+        // Bugünün başlangıcı ve bitişi
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
-        // Bugün giriş yapıyorsa aktif
-        if (startDate.getTime() === today.getTime()) {
-            return true;
-        }
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
         
-        // Bugün çıkış yapıyorsa, şu anki saate göre değerlendir
-        if (endDate.getTime() === today.getTime()) {
-            // Çıkış saati kontrolü (genellikle öğlen 12:00)
-            const checkoutHour = 12; // Varsayılan çıkış saati 12:00
-            const currentHour = new Date().getHours();
-            
-            // Eğer şu anki saat çıkış saatinden küçükse, hala aktif say
-            return currentHour < checkoutHour;
-        }
-        
-        // Normal aktiflik kontrolü (giriş tarihi geçmiş, çıkış tarihi gelmemiş)
-        return startDate < today && endDate > today;
-    });
-    
-    // Doluluk oranı
-    const occupancyRate = calculateOccupancyRate(activeAssignments);
-    
-    // Sayaçları güncelle
-    document.getElementById('arrivalsCount').textContent = arrivingToday.length;
-    document.getElementById('departuresCount').textContent = departingToday.length;
-    document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
-    document.getElementById('occupiedVillas').textContent = activeAssignments.length;
-    document.getElementById('totalAvailableVillas').textContent = villas.length;
-    
-    // Detay tablolarını güncelle
-    updateArrivalsTable(arrivingToday);
-    updateDeparturesTable(departingToday);
-    updateOccupancyDetails(activeAssignments, occupancyRate);
-}
-
-// Gelenler tablosunu güncelle
-function updateArrivalsTable(arrivingAssignments) {
-    const tableBody = document.querySelector('#arrivalsTable tbody');
-    tableBody.innerHTML = '';
-    
-    if (arrivingAssignments.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" class="no-data">Bugün gelen misafir bulunmuyor.</td></tr>';
-        return;
-    }
-    
-    // Başlangıç saatine göre sırala (sabahtan akşama)
-    arrivingAssignments.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    
-    arrivingAssignments.forEach(assignment => {
-        const villa = villas.find(v => v.isim === assignment.villa) || { isim: assignment.villa, kategori: 'Bilinmiyor' };
-        const lea = leas.find(l => l.isim === assignment.lea) || { isim: assignment.lea };
-        const secondaryLea = assignment.secondaryLea ? leas.find(l => l.isim === assignment.secondaryLea) : null;
-        
-        const startDate = new Date(assignment.startDate);
-        const endDate = new Date(assignment.endDate);
-        const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        
-        // Varsayılan giriş saati 14:00 olarak kabul edildi (isterseniz değiştirilebilir)
-        const checkInTime = '14:00';
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${villa.isim}</td>
-            <td>${villa.kategori}</td>
-            <td>
-                ${lea.isim}
-                ${secondaryLea ? `<br><small>(2. LEA: ${secondaryLea.isim})</small>` : ''}
-            </td>
-            <td>${checkInTime}</td>
-            <td>${nights} gece</td>
-        `;
-        
-        tableBody.appendChild(row);
-    });
-}
-
-// Ayrılanlar tablosunu güncelle
-function updateDeparturesTable(departingAssignments) {
-    const tableBody = document.querySelector('#departuresTable tbody');
-    tableBody.innerHTML = '';
-    
-    if (departingAssignments.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" class="no-data">Bugün ayrılan misafir bulunmuyor.</td></tr>';
-        return;
-    }
-    
-    // Çıkış saatine göre sırala (sabahtan akşama)
-    departingAssignments.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-    
-    departingAssignments.forEach(assignment => {
-        const villa = villas.find(v => v.isim === assignment.villa) || { isim: assignment.villa, kategori: 'Bilinmiyor' };
-        const lea = leas.find(l => l.isim === assignment.lea) || { isim: assignment.lea };
-        const secondaryLea = assignment.secondaryLea ? leas.find(l => l.isim === assignment.secondaryLea) : null;
-        
-        const startDate = new Date(assignment.startDate);
-        const endDate = new Date(assignment.endDate);
-        const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        
-        // Varsayılan çıkış saati 12:00 olarak kabul edildi (isterseniz değiştirilebilir)
-        const checkOutTime = '12:00';
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${villa.isim}</td>
-            <td>${villa.kategori}</td>
-            <td>
-                ${lea.isim}
-                ${secondaryLea ? `<br><small>(2. LEA: ${secondaryLea.isim})</small>` : ''}
-            </td>
-            <td>${checkOutTime}</td>
-            <td>${nights} gece</td>
-        `;
-        
-        tableBody.appendChild(row);
-    });
-}
-
-// Doluluk detaylarını güncelle
-function updateOccupancyDetails(activeAssignments, generalOccupancy) {
-    // Doluluk metriklerini güncelle
-    document.getElementById('generalOccupancy').textContent = `${generalOccupancy}%`;
-    
-    // Villa tiplerine göre doluluk hesapla
-    const villaTypes = Object.values(VILLA_TYPES);
-    
-    villaTypes.forEach(type => {
-        const villasByType = villas.filter(v => v.tip === type);
-        const occupiedVillasByType = [];
-        
-        // Her tip için dolu villaları bul
-        activeAssignments.forEach(assignment => {
-            const villa = villas.find(v => v.isim === assignment.villa);
-            if (villa && villa.tip === type && !occupiedVillasByType.includes(villa.isim)) {
-                occupiedVillasByType.push(villa.isim);
-            }
-        });
-        
-        const occupancyByType = villasByType.length > 0 ? 
-            Math.round((occupiedVillasByType.length / villasByType.length) * 100) : 0;
-        
-        const elementId = `${type.toLowerCase()}Occupancy`;
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = `${occupancyByType}%`;
-        }
-    });
-    
-    // Doluluk tablosunu güncelle
-    const tableBody = document.querySelector('#occupancyTable tbody');
-    tableBody.innerHTML = '';
-    
-    // Bugünün tarihi
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Çıkış saati (genellikle 12:00)
-    const checkoutHour = 12;
-    const currentHour = new Date().getHours();
-    
-    // Tüm villaları göster, dolu veya boş
-    const allVillas = [...villas];
-    allVillas.sort((a, b) => a.isim.localeCompare(b.isim));
-    
-    allVillas.forEach(villa => {
-        // Villa için tüm atamaları bul
-        const villaAssignments = assignments.filter(a => a.villa === villa.isim);
-        
-        // Bugün giriş yapacak atama
-        const arrivingAssignment = villaAssignments.find(a => {
-            const startDate = new Date(a.startDate);
+        // Bugün gelenler
+        const arrivingToday = assignments.filter(assignment => {
+            const startDate = new Date(assignment.startDate);
             startDate.setHours(0, 0, 0, 0);
             return startDate.getTime() === today.getTime();
         });
         
-        // Bugün çıkış yapacak atama
-        const departingAssignment = villaAssignments.find(a => {
-            const endDate = new Date(a.endDate);
+        // Bugün ayrılanlar
+        const departingToday = assignments.filter(assignment => {
+            const endDate = new Date(assignment.endDate);
             endDate.setHours(0, 0, 0, 0);
             return endDate.getTime() === today.getTime();
         });
         
-        // Aktif atama (bugün giriş, bugün çıkış saati öncesi, veya normal aktif)
-        const activeAssignment = villaAssignments.find(a => {
-            const startDate = new Date(a.startDate);
-            const endDate = new Date(a.endDate);
+        // Dolu villalar (aktif atamalar)
+        // Not: Bugün giriş yapacak villalar aktif, bugün çıkış yapacak villalar pasif durumda
+        const activeAssignments = assignments.filter(assignment => {
+            const startDate = new Date(assignment.startDate);
+            const endDate = new Date(assignment.endDate);
             startDate.setHours(0, 0, 0, 0);
             endDate.setHours(0, 0, 0, 0);
             
-            // Bugün giriş
+            // Bugün giriş yapıyorsa aktif
             if (startDate.getTime() === today.getTime()) {
                 return true;
             }
             
-            // Bugün çıkış ve çıkış saati öncesi
-            if (endDate.getTime() === today.getTime() && currentHour < checkoutHour) {
-                return true;
+            // Bugün çıkış yapıyorsa, şu anki saate göre değerlendir
+            if (endDate.getTime() === today.getTime()) {
+                // Çıkış saati kontrolü (genellikle öğlen 12:00)
+                const checkoutHour = 12; // Varsayılan çıkış saati 12:00
+                const currentHour = new Date().getHours();
+                
+                // Eğer şu anki saat çıkış saatinden küçükse, hala aktif say
+                return currentHour < checkoutHour;
             }
             
-            // Normal aktif
+            // Normal aktiflik kontrolü (giriş tarihi geçmiş, çıkış tarihi gelmemiş)
             return startDate < today && endDate > today;
         });
         
-        const row = document.createElement('tr');
+        // Doluluk oranı
+        const occupancyRate = calculateOccupancyRate(activeAssignments);
         
-        if (activeAssignment) {
-            // Villa aktif durumdaysa
-            const lea = leas.find(l => l.isim === activeAssignment.lea) || { isim: activeAssignment.lea };
-            const secondaryLea = activeAssignment.secondaryLea ? leas.find(l => l.isim === activeAssignment.secondaryLea) : null;
-            
-            let statusText = "Dolu";
-            let statusClass = "aktif";
-            
-            // Bugün giriş yapıyorsa özel durum belirt
-            if (arrivingAssignment && arrivingAssignment.id === activeAssignment.id) {
-                statusText = "Giriş";
-                statusClass = "gelecek";
+        // Sayaçları güncelle - DOM elementlerinin varlığını kontrol et
+        const elements = [
+            { id: 'arrivalsCount', value: arrivingToday.length },
+            { id: 'departuresCount', value: departingToday.length },
+            { id: 'occupancyRate', value: `${occupancyRate}%` },
+            { id: 'occupiedVillas', value: activeAssignments.length },
+            { id: 'totalAvailableVillas', value: villas.length }
+        ];
+        
+        elements.forEach(item => {
+            const element = document.getElementById(item.id);
+            if (element) {
+                element.textContent = item.value;
+            } else {
+                console.warn(`Element bulunamadı: #${item.id}`);
             }
+        });
+        
+        // Detay tablolarını güncelle
+        updateArrivalsTable(arrivingToday);
+        updateDeparturesTable(departingToday);
+        updateOccupancyDetails(activeAssignments, occupancyRate);
+        
+        console.log("Daily Brief verileri güncellendi");
+    } catch (error) {
+        console.error("updateDailyBrief hatası:", error);
+    }
+}
+
+// Gelenler tablosunu güncelle
+function updateArrivalsTable(arrivingAssignments) {
+    try {
+        const tableBody = document.querySelector('#arrivalsTable tbody');
+        if (!tableBody) {
+            console.warn("Arrivals table tbody elementi bulunamadı!");
+            return;
+        }
+        
+        tableBody.innerHTML = '';
+        
+        if (arrivingAssignments.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="no-data">Bugün gelen misafir bulunmuyor.</td></tr>';
+            return;
+        }
+        
+        // Başlangıç saatine göre sırala (sabahtan akşama)
+        arrivingAssignments.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        
+        arrivingAssignments.forEach(assignment => {
+            const villa = villas.find(v => v.isim === assignment.villa) || { isim: assignment.villa, kategori: 'Bilinmiyor' };
+            const lea = leas.find(l => l.isim === assignment.lea) || { isim: assignment.lea };
+            const secondaryLea = assignment.secondaryLea ? leas.find(l => l.isim === assignment.secondaryLea) : null;
             
-            // Bugün çıkış yapıyorsa özel durum belirt
-            if (departingAssignment && departingAssignment.id === activeAssignment.id) {
-                statusText = "Çıkış";
-                if (currentHour >= checkoutHour) {
-                    statusClass = "geçmiş";
-                }
-            }
+            const startDate = new Date(assignment.startDate);
+            const endDate = new Date(assignment.endDate);
+            const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
             
+            // Varsayılan giriş saati 14:00 olarak kabul edildi (isterseniz değiştirilebilir)
+            const checkInTime = '14:00';
+            
+            const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${villa.isim}</td>
                 <td>${villa.kategori}</td>
-                <td><span class="compact-status ${statusClass}">${statusText}</span></td>
                 <td>
                     ${lea.isim}
                     ${secondaryLea ? `<br><small>(2. LEA: ${secondaryLea.isim})</small>` : ''}
                 </td>
-                <td>${formatDate(activeAssignment.startDate)}</td>
-                <td>${formatDate(activeAssignment.endDate)}</td>
+                <td>${checkInTime}</td>
+                <td>${nights} gece</td>
             `;
-        } else {
-            // Villa boş durumdaysa
+            
+            tableBody.appendChild(row);
+        });
+        
+        console.log(`Gelenler tablosu güncellendi: ${arrivingAssignments.length} gelen misafir`);
+    } catch (error) {
+        console.error("updateArrivalsTable hatası:", error);
+    }
+}
+
+// Ayrılanlar tablosunu güncelle
+function updateDeparturesTable(departingAssignments) {
+    try {
+        const tableBody = document.querySelector('#departuresTable tbody');
+        if (!tableBody) {
+            console.warn("Departures table tbody elementi bulunamadı!");
+            return;
+        }
+        
+        tableBody.innerHTML = '';
+        
+        if (departingAssignments.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="no-data">Bugün ayrılan misafir bulunmuyor.</td></tr>';
+            return;
+        }
+        
+        // Çıkış saatine göre sırala (sabahtan akşama)
+        departingAssignments.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+        
+        departingAssignments.forEach(assignment => {
+            const villa = villas.find(v => v.isim === assignment.villa) || { isim: assignment.villa, kategori: 'Bilinmiyor' };
+            const lea = leas.find(l => l.isim === assignment.lea) || { isim: assignment.lea };
+            const secondaryLea = assignment.secondaryLea ? leas.find(l => l.isim === assignment.secondaryLea) : null;
+            
+            const startDate = new Date(assignment.startDate);
+            const endDate = new Date(assignment.endDate);
+            const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            
+            // Varsayılan çıkış saati 12:00 olarak kabul edildi (isterseniz değiştirilebilir)
+            const checkOutTime = '12:00';
+            
+            const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${villa.isim}</td>
                 <td>${villa.kategori}</td>
-                <td><span class="compact-status geçmiş">Boş</span></td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
+                <td>
+                    ${lea.isim}
+                    ${secondaryLea ? `<br><small>(2. LEA: ${secondaryLea.isim})</small>` : ''}
+                </td>
+                <td>${checkOutTime}</td>
+                <td>${nights} gece</td>
             `;
-            row.classList.add('empty-villa');
+            
+            tableBody.appendChild(row);
+        });
+        
+        console.log(`Ayrılanlar tablosu güncellendi: ${departingAssignments.length} ayrılan misafir`);
+    } catch (error) {
+        console.error("updateDeparturesTable hatası:", error);
+    }
+}
+
+// Doluluk detaylarını güncelle
+function updateOccupancyDetails(activeAssignments, generalOccupancy) {
+    try {
+        // Doluluk metriklerini güncelle
+        const generalOccupancyElement = document.getElementById('generalOccupancy');
+        if (generalOccupancyElement) {
+            generalOccupancyElement.textContent = `${generalOccupancy}%`;
         }
         
-        tableBody.appendChild(row);
-    });
+        // Villa tiplerine göre doluluk hesapla
+        const villaTypes = Object.values(VILLA_TYPES);
+        
+        villaTypes.forEach(type => {
+            const villasByType = villas.filter(v => v.tip === type);
+            const occupiedVillasByType = [];
+            
+            // Her tip için dolu villaları bul
+            activeAssignments.forEach(assignment => {
+                const villa = villas.find(v => v.isim === assignment.villa);
+                if (villa && villa.tip === type && !occupiedVillasByType.includes(villa.isim)) {
+                    occupiedVillasByType.push(villa.isim);
+                }
+            });
+            
+            const occupancyByType = villasByType.length > 0 ? 
+                Math.round((occupiedVillasByType.length / villasByType.length) * 100) : 0;
+            
+            const elementId = `${type.toLowerCase()}Occupancy`;
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = `${occupancyByType}%`;
+            } else {
+                console.warn(`Element bulunamadı: #${elementId}`);
+            }
+        });
+        
+        // Doluluk tablosunu güncelle
+        const tableBody = document.querySelector('#occupancyTable tbody');
+        if (!tableBody) {
+            console.warn("Occupancy table tbody elementi bulunamadı!");
+            return;
+        }
+        
+        tableBody.innerHTML = '';
+        
+        // Bugünün tarihi
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Çıkış saati (genellikle 12:00)
+        const checkoutHour = 12;
+        const currentHour = new Date().getHours();
+        
+        // Tüm villaları göster, dolu veya boş
+        const allVillas = [...villas];
+        
+        // Villaları kategorilerine göre sırala
+        allVillas.sort((a, b) => {
+            if (a.kategori === b.kategori) {
+                return a.isim.localeCompare(b.isim);
+            }
+            return a.kategori.localeCompare(b.kategori);
+        });
+        
+        allVillas.forEach(villa => {
+            // Bu villa için atama bul
+            const assignment = activeAssignments.find(a => a.villa === villa.isim);
+            
+            const row = document.createElement('tr');
+            row.className = assignment ? 'occupied' : 'available';
+            
+            if (assignment) {
+                const lea = leas.find(l => l.isim === assignment.lea) || { isim: assignment.lea };
+                const secondaryLea = assignment.secondaryLea ? leas.find(l => l.isim === assignment.secondaryLea) : null;
+                
+                const startDate = new Date(assignment.startDate);
+                const endDate = new Date(assignment.endDate);
+                
+                // Bugün giriş mi, çıkış mı, yoksa normal konaklama mı?
+                let status = 'Dolu';
+                if (startDate.getTime() === today.getTime()) {
+                    status = 'Bugün Giriş';
+                } else if (endDate.getTime() === today.getTime() && currentHour < checkoutHour) {
+                    status = 'Bugün Çıkış';
+                }
+                
+                row.innerHTML = `
+                    <td>${villa.isim}</td>
+                    <td>${villa.kategori}</td>
+                    <td class="status-cell ${status === 'Dolu' ? 'status-occupied' : (status === 'Bugün Giriş' ? 'status-arriving' : 'status-departing')}">${status}</td>
+                    <td>
+                        ${lea.isim}
+                        ${secondaryLea ? `<br><small>(2. LEA: ${secondaryLea.isim})</small>` : ''}
+                    </td>
+                    <td>${formatDate(startDate)} - ${formatDate(endDate)}</td>
+                `;
+            } else {
+                row.innerHTML = `
+                    <td>${villa.isim}</td>
+                    <td>${villa.kategori}</td>
+                    <td class="status-cell status-available">Müsait</td>
+                    <td>-</td>
+                    <td>-</td>
+                `;
+            }
+            
+            tableBody.appendChild(row);
+        });
+        
+        console.log("Doluluk detayları güncellendi");
+    } catch (error) {
+        console.error("updateOccupancyDetails hatası:", error);
+    }
 }
 
 // Doluluk oranını hesapla
 function calculateOccupancyRate(activeAssignments) {
-    if (villas.length === 0) return 0;
-    
-    // Dolu villa sayısını hesapla (her villa için sadece bir aktif atama sayılır)
-    const occupiedVillas = new Set();
-    activeAssignments.forEach(assignment => {
-        occupiedVillas.add(assignment.villa);
-    });
-    
-    const occupancyRate = Math.round((occupiedVillas.size / villas.length) * 100);
-    return occupancyRate;
+    try {
+        if (!villas || villas.length === 0) {
+            console.warn("Villa verileri eksik, doluluk oranı hesaplanamadı");
+            return 0;
+        }
+        
+        // Dolu villaların tekrar etmeksizin listesini oluştur
+        const occupiedVillaNames = [];
+        activeAssignments.forEach(assignment => {
+            if (!occupiedVillaNames.includes(assignment.villa)) {
+                occupiedVillaNames.push(assignment.villa);
+            }
+        });
+        
+        // Doluluk oranını yüzde olarak hesapla
+        const occupancyRate = Math.round((occupiedVillaNames.length / villas.length) * 100);
+        return occupancyRate;
+    } catch (error) {
+        console.error("calculateOccupancyRate hatası:", error);
+        return 0; // Hata durumunda 0 dön
+    }
 }
 
 // Günlük Brief yazdır
