@@ -1,0 +1,87 @@
+[
+  {
+    "id": "1",
+    "isim": "Özcan Akal",
+    "kategori": "LEA"
+  },
+  {
+    "id": "2",
+    "isim": "Valeriya Dikbaş",
+    "kategori": "LEA"
+  },
+  {
+    "id": "3",
+    "isim": "Eda Randa",
+    "kategori": "LEA"
+  },
+  {
+    "id": "4",
+    "isim": "Gülay Terak",
+    "kategori": "LEA"
+  },
+  {
+    "id": "5",
+    "isim": "Doğukan Akkan",
+    "kategori": "LEA"
+  },
+  {
+    "id": "6",
+    "isim": "Çağatay Bayel",
+    "kategori": "LEA"
+  },
+  {
+    "id": "7",
+    "isim": "Bargıran Aslan",
+    "kategori": "LEA"
+  },
+  {
+    "id": "8",
+    "isim": "Kevser Arslan",
+    "kategori": "LEA"
+  },
+  {
+    "id": "9",
+    "isim": "Oleg Vyrvin",
+    "kategori": "LEA"
+  },
+  {
+    "id": "10",
+    "isim": "Halima Gasımlı",
+    "kategori": "LEA"
+  },
+  {
+    "id": "11",
+    "isim": "Aibar Esenov",
+    "kategori": "LEA"
+  },
+  {
+    "id": "12",
+    "isim": "Berat Yapıcı",
+    "kategori": "LEA"
+  },
+  {
+    "id": "13",
+    "isim": "Osman Kaya",
+    "kategori": "LEA"
+  },
+  {
+    "id": "14",
+    "isim": "Umut Avgören",
+    "kategori": "LEA"
+  },
+  {
+    "id": "15",
+    "isim": "Ekin Bayrak",
+    "kategori": "Floor Butler"
+  },
+  {
+    "id": "16",
+    "isim": "İbrahim Özgiray",
+    "kategori": "Floor Butler"
+  },
+  {
+    "id": "17",
+    "isim": "Emre Erkan",
+    "kategori": "LEA"
+  }
+] 

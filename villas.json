@@ -1,0 +1,307 @@
+[
+  {
+    "id": "1",
+    "isim": "1711",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "2",
+    "isim": "1712",
+    "kategori": "Maki"
+  },
+  {
+    "id": "3",
+    "isim": "1713",
+    "kategori": "Maki"
+  },
+  {
+    "id": "4",
+    "isim": "1714",
+    "kategori": "Maki"
+  },
+  {
+    "id": "5",
+    "isim": "2111",
+    "kategori": "Maki"
+  },
+  {
+    "id": "6",
+    "isim": "2112",
+    "kategori": "Maki"
+  },
+  {
+    "id": "7",
+    "isim": "2113",
+    "kategori": "Maki"
+  },
+  {
+    "id": "8",
+    "isim": "2114",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "9",
+    "isim": "2211",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "10",
+    "isim": "2212",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "11",
+    "isim": "2311",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "12",
+    "isim": "2312",
+    "kategori": "Maki"
+  },
+  {
+    "id": "13",
+    "isim": "2313",
+    "kategori": "Maki"
+  },
+  {
+    "id": "14",
+    "isim": "2314",
+    "kategori": "Maki"
+  },
+  {
+    "id": "15",
+    "isim": "2411",
+    "kategori": "Maki 3"
+  },
+  {
+    "id": "16",
+    "isim": "2412",
+    "kategori": "Maki"
+  },
+  {
+    "id": "17",
+    "isim": "2413",
+    "kategori": "Maki"
+  },
+  {
+    "id": "18",
+    "isim": "2414",
+    "kategori": "Maki"
+  },
+  {
+    "id": "19",
+    "isim": "2511",
+    "kategori": "Maki"
+  },
+  {
+    "id": "20",
+    "isim": "2512",
+    "kategori": "Maki"
+  },
+  {
+    "id": "21",
+    "isim": "2513",
+    "kategori": "Maki"
+  },
+  {
+    "id": "22",
+    "isim": "2514",
+    "kategori": "Maki"
+  },
+  {
+    "id": "23",
+    "isim": "3001",
+    "kategori": "Presidential"
+  },
+  {
+    "id": "24",
+    "isim": "3002",
+    "kategori": "Pina"
+  },
+  {
+    "id": "25",
+    "isim": "3003",
+    "kategori": "Citrus"
+  },
+  {
+    "id": "26",
+    "isim": "3004",
+    "kategori": "Junior Citrus"
+  },
+  {
+    "id": "27",
+    "isim": "3005",
+    "kategori": "Citrus"
+  },
+  {
+    "id": "28",
+    "isim": "3006",
+    "kategori": "Citrus"
+  },
+  {
+    "id": "29",
+    "isim": "3007",
+    "kategori": "Citrus"
+  },
+  {
+    "id": "30",
+    "isim": "4001",
+    "kategori": "Forest"
+  },
+  {
+    "id": "31",
+    "isim": "4002",
+    "kategori": "Forest"
+  },
+  {
+    "id": "32",
+    "isim": "4003",
+    "kategori": "Forest"
+  },
+  {
+    "id": "33",
+    "isim": "4004",
+    "kategori": "Forest"
+  },
+  {
+    "id": "34",
+    "isim": "7001",
+    "kategori": "Sunset Presidential"
+  },
+  {
+    "id": "35",
+    "isim": "7002",
+    "kategori": "Sunset Pina"
+  },
+  {
+    "id": "36",
+    "isim": "7003",
+    "kategori": "Sunset Pina 5"
+  },
+  {
+    "id": "37",
+    "isim": "7004",
+    "kategori": "Sunset Citrus"
+  },
+  {
+    "id": "38",
+    "isim": "7005",
+    "kategori": "Sunset Citrus"
+  },
+  {
+    "id": "39",
+    "isim": "7006",
+    "kategori": "Sunset Royal"
+  },
+  {
+    "id": "40",
+    "isim": "7007",
+    "kategori": "Sunset Pina"
+  },
+  {
+    "id": "41",
+    "isim": "7008",
+    "kategori": "Sunset Royal"
+  },
+  {
+    "id": "42",
+    "isim": "7009",
+    "kategori": "Sunset Citrus"
+  },
+  {
+    "id": "43",
+    "isim": "7010",
+    "kategori": "Sunset 1"
+  },
+  {
+    "id": "44",
+    "isim": "7011",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "45",
+    "isim": "7012",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "46",
+    "isim": "7013",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "47",
+    "isim": "7014",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "48",
+    "isim": "7015",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "49",
+    "isim": "7016",
+    "kategori": "Sunset"
+  },
+  {
+    "id": "50",
+    "isim": "7017",
+    "kategori": "Sunset Royal"
+  },
+  {
+    "id": "51",
+    "isim": "7018",
+    "kategori": "Sunset Royal"
+  },
+  {
+    "id": "52",
+    "isim": "7019",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "53",
+    "isim": "7020",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "54",
+    "isim": "7021",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "55",
+    "isim": "7022",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "56",
+    "isim": "7023",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "57",
+    "isim": "7024",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "58",
+    "isim": "7025",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "59",
+    "isim": "7026",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "60",
+    "isim": "7027",
+    "kategori": "Sunset Beach"
+  },
+  {
+    "id": "61",
+    "isim": "7028",
+    "kategori": "Sunset Beach 2"
+  }
+] 
